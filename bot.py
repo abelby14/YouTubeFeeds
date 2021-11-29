@@ -72,9 +72,11 @@ async def get_updates():
 async def sendMessage(msg, pic=None, buttons=None):
     for i in chats:
         try:
-            await bot.send_message(i, msg, file=pic, buttons=buttons)
+            for i in range(15):
+                await bot.send_message(i, msg, file=pic, buttons=buttons)
         except ValueError:
-            await bot.send_message(i, msg, buttons=buttons)
+            for i in range(15):
+                await bot.send_message(i, msg, buttons=buttons)
         except Exception as e:
             logging.warning(e)
 
