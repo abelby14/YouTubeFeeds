@@ -1,4 +1,4 @@
-# < (c) @xditya >
+# < (c) @abelespin >
 # Keep credits, if using.
 
 import logging
@@ -43,7 +43,7 @@ except Exception as e:
 
 async def get_updates():
     async with bot:
-        await sendMessage("Started.")
+        await sendMessage("YT video alert WORKING!.")
         while True:
             feed_ = parse(
                 "https://www.youtube.com/feeds/videos.xml?channel_id={}".format(
@@ -61,9 +61,10 @@ async def get_updates():
                 link = feed.link
                 redis_db.set("LAST_POST", link)
                 try:
-                    await sendMessage(
-                        msg, pic, buttons=Button.url("Watch Now!", url=link)
-                    )
+                    for i in range(15):
+                        await sendMessage(
+                            msg, pic, buttons=Button.url("Watch Now!", url=link)
+                        )
                     await asyncio.sleep(check_time)
                 except Exception as e:
                     logging.warning(e)
@@ -72,11 +73,9 @@ async def get_updates():
 async def sendMessage(msg, pic=None, buttons=None):
     for i in chats:
         try:
-            for i in range(15):
-                await bot.send_message(i, msg, file=pic, buttons=buttons)
+            await bot.send_message(i, msg, file=pic, buttons=buttons)
         except ValueError:
-            for i in range(15):
-                await bot.send_message(i, msg, buttons=buttons)
+            await bot.send_message(i, msg, buttons=buttons)
         except Exception as e:
             logging.warning(e)
 
