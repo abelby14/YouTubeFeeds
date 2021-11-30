@@ -43,16 +43,22 @@ except Exception as e:
 
 async def get_updates():
     async with bot:
-        await sendMessage("YT video alert WORKING!.")
-        while True:
-            feed_ = parse(
+        #Init feedlink
+        feed_ = parse(
                 "https://www.youtube.com/feeds/videos.xml?channel_id={}".format(
                     channelid
                 )
             )
-            feed = feed_.entries[0]
-            pic = "https://img.youtube.com/vi/{}/hqdefault.jpg".format(feed.yt_videoid)
-            prev_ = redis_db.get("LAST_POST") or ""
+        feed = feed_.entries[0]
+        pic = "https://img.youtube.com/vi/{}/hqdefault.jpg".format(feed.yt_videoid)
+        link = feed.link
+        redis_db.set("LAST_POST", link)
+        
+        await sendMessage("YT video alert WORKING!.")
+        
+        #Loop comprovations -> new video?
+        while True:
+            prev_ = redis_db.get("LAST_POST") 
             if feed.link != prev_:
                 msg = "**New Video Uploaded to** [YouTube](https://www.youtube.com/channel/{})!\n\n".format(
                     channelid
@@ -68,6 +74,14 @@ async def get_updates():
                     await asyncio.sleep(check_time)
                 except Exception as e:
                     logging.warning(e)
+                    
+            feed_ = parse(
+                "https://www.youtube.com/feeds/videos.xml?channel_id={}".format(
+                    channelid
+                )
+            )
+            feed = feed_.entries[0]
+            pic = "https://img.youtube.com/vi/{}/hqdefault.jpg".format(feed.yt_videoid)
 
 
 async def sendMessage(msg, pic=None, buttons=None):
